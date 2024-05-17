@@ -3,6 +3,8 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import {jwtDecode} from "jwt-decode"; // Updated import statement
 import { useRouter } from 'next/navigation';
+import { Navbar } from '@/components/Navbar';
+import Folder from '@/components/Folder';
 
 interface tokenType {
   _id: string;
@@ -48,7 +50,8 @@ export default function Home() {
 
   return (
     <div>
-      Home {user?.email }
+      <Navbar/>
+      <Folder userData={user as tokenType} />
     </div>
   );
 }
