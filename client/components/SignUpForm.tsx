@@ -11,7 +11,7 @@ import Label from './Label';
 const backend = process.env.BACKEND;
 
 const schema = z.object({
-  firsName:z.string(),
+  firstName:z.string(),
   lastName:z.string(),
   email:z.string().email(),
   password: z.string()
@@ -36,8 +36,10 @@ export default function SignUpForm() {
         body:JSON.stringify(data)
       });
       const output = await res.json();
-      if(!output.done){
-        throw output.msg
+      if(!res.ok){
+        setError('root',{
+        message:'Bad request'
+      })
       }else{
         router.push('/home')
       }
@@ -49,22 +51,22 @@ export default function SignUpForm() {
   }
 
   return (
-    <div className='w-96'>
+    <div className='w-80 lg:w-96'>
     <BackgroundGradient className="rounded-[22px]   bg-zinc-900">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full h-max pb-6 shadow-lg rounded-lg flex flex-col ">
           <h2 className=" font-GraphikBlack font-medium text-3xl mt-6 mb-4 mx-auto">Sign Up</h2>
           <div className="grid w-[80%] mx-auto md:grid-cols-2 md:gap-6">
               <div className="relative z-0 w-full mb-3 md:mb-6 group">
-                  <input type="text" name="first_name" id="first_name" className="input-class peer" placeholder=" " required />
+                  <input {...register('firstName')} type="text" name="firstName" id="firstName" className="input-class peer" placeholder=" " required />
                   <Label htmlFor='firstName' text='First Name' />
               </div>
               <div className="relative z-0 w-full mb-3 md:mb-6 group">
-                  <input type="text" name="floating_last_name" id="floating_last_name" className="input-class peer" placeholder=" " required />
+                  <input {...register('lastName')} type="text" name="lastName" id="lastName" className="input-class peer" placeholder=" " required />
                   <Label htmlFor='lastName' text='Last Name' />
               </div>
             </div>
           <div className="input-container group">
-            <input {...register('email')} type="text" name="Staff_Email" className="input-class peer" placeholder=" "  />
+            <input {...register('email')} type="text" name="email" className="input-class peer" placeholder=" "  />
             <Label htmlFor='email' text='Email'/>
           </div>
           <div className="input-container group">
@@ -74,9 +76,9 @@ export default function SignUpForm() {
           {/* <p className=" text-sm font-semibold font-GraphikBlack text-[#0FADFF]">Forgot password ?</p> */}
           <button disabled={isSubmitting} className="bg-[#0FADFF] mt-2 mx-16 text-white rounded-full py-2 font-GraphikBlack">{isSubmitting ?'Loading...':"Submit"}</button>
           <p className=" text-sm font-meduim font-GraphikBlack text-white mt-2 w-max mx-auto">Already have an account ? <Link href={'/login'}><span className="text-[#0FADFF]">Login</span></Link>  </p>
-          {errors.root && <div className="text-red-500 font-GraphikBlack text-sm ">{errors.root?.message}</div> }
-          {errors.email && <div className="text-red-500 font-GraphikBlack text-sm ">{errors.email?.message}</div> }
-          {errors.password && <div className="text-red-500 font-GraphikBlack text-sm ">{errors.password?.message}</div> }
+          {errors.root && <div className="text-red-500 font-GraphikBlack mx-auto text-sm ">{errors.root?.message}</div> }
+          {errors.email && <div className="text-red-500 font-GraphikBlack mx-auto text-sm ">{errors.email?.message}</div> }
+          {errors.password && <div className="text-red-500 font-GraphikBlack mx-auto text-sm ">{errors.password?.message}</div> }
         </form>
     </BackgroundGradient>
       
