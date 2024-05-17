@@ -41,7 +41,7 @@ export default function SignUpForm() {
         message:'Bad request'
       })
       }else{
-        router.push('/home')
+        router.push('/login')
       }
     }catch(err:any){
       setError('root',{
@@ -76,9 +76,27 @@ export default function SignUpForm() {
           {/* <p className=" text-sm font-semibold font-GraphikBlack text-[#0FADFF]">Forgot password ?</p> */}
           <button disabled={isSubmitting} className="bg-[#0FADFF] mt-2 mx-16 text-white rounded-full py-2 font-GraphikBlack">{isSubmitting ?'Loading...':"Submit"}</button>
           <p className=" text-sm font-meduim font-GraphikBlack text-white mt-2 w-max mx-auto">Already have an account ? <Link href={'/login'}><span className="text-[#0FADFF]">Login</span></Link>  </p>
-          {errors.root && <div className="text-red-500 font-GraphikBlack mx-auto text-sm ">{errors.root?.message}</div> }
-          {errors.email && <div className="text-red-500 font-GraphikBlack mx-auto text-sm ">{errors.email?.message}</div> }
-          {errors.password && <div className="text-red-500 font-GraphikBlack mx-auto text-sm ">{errors.password?.message}</div> }
+          {
+            errors.root 
+            &&
+            <div className="text-red-500 mx-auto text-sm ">
+              {errors.root?.message}
+            </div> 
+          }
+          {
+            errors.email
+            &&
+            <div className="text-red-500 mx-auto text-sm ">
+              {errors.email?.message}
+            </div>
+          }
+          {
+            errors.password 
+            && 
+            <div className="text-red-500 mx-auto text-sm ">
+              {errors.password?.message}
+            </div> 
+          }
         </form>
     </BackgroundGradient>
       

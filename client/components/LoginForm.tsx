@@ -38,6 +38,7 @@ export default function LoginForm() {
       if(!res.ok){
         console.log('error')
       }else{
+        localStorage.setItem("token",output.user);
         router.push('/home')
       }
     }catch(err:any){
@@ -63,9 +64,12 @@ export default function LoginForm() {
           {/* <p className=" text-sm font-semibold font-GraphikBlack text-[#0FADFF]">Forgot password ?</p> */}
           <button disabled={isSubmitting} className="bg-[#0FADFF] mt-2 mx-16 text-white rounded-full py-2 font-GraphikBlack">{isSubmitting ?'Loading...':"Submit"}</button>
           <p className=" text-sm font-meduim font-GraphikBlack text-white mt-2 w-max mx-auto">Dont have an account yet ? <Link href={'/signup'}><span className="text-[#0FADFF]">Sign up</span></Link>  </p>
-          {errors.root && <div className="text-red-500 font-GraphikBlack mx-auto text-sm ">{errors.root?.message}</div> }
-          {errors.email && <div className="text-red-500 font-GraphikBlack mx-auto text-sm ">{errors.email?.message}</div> }
-          {errors.password && <div className="text-red-500 font-GraphikBlack mx-auto text-sm ">{errors.password?.message}</div> }
+          {errors.root && 
+          <div className="text-red-500 mx-auto text-sm ">{errors.root?.message}</div> }
+          {errors.email && 
+          <div className="text-red-500 mx-auto text-sm ">{errors.email?.message}</div> }
+          {errors.password && 
+          <div className="text-red-500 mx-auto text-sm ">{errors.password?.message}</div> }
         </form>
     </BackgroundGradient>
       
