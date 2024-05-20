@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react"
 import Link from 'next/link'
 import toast, { Toaster } from 'react-hot-toast';
-  
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { IconDotsVertical } from '@tabler/icons-react'
+
 interface tokenType {
   _id:string;
   email:string;
@@ -99,10 +108,9 @@ export default  function Folder({userData}:FolderProps) {
         console.log(userData);
         const getFolders =async () => {
             if(userData?.email){
-
-                const res = await fetch(`${backend}/${userData?.email}/getFolders`);
-                const data:{ folderList: FolderList[] } = await res.json();
-                setFolders(data.folderList)
+                const res = await fetch(`${backend}/${userData.email}/getFolders`);
+                const data = await res.json();
+                setFolders(data.folderList);
             }
         }
         getFolders();
@@ -120,15 +128,28 @@ export default  function Folder({userData}:FolderProps) {
             folders
             ?
             folders.map((folder:FolderList )=>(
-                <div key={folder._id} className="flex items-center space-x-4 justify-between w-full ">
-                    <Link className=" flex w-full space-x-4 hover:bg-gray-700 bg-none sm:py-4 px-2 rounded-lg" href={`/folder/${userData?.email}/${folder?.folderName}`}>
-                        <span className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 via-violet-800 to-blue-500 px-4"></span>
+                <Link  href={`/folder/${userData?.email}/${folder?.folderName}`} key={folder._id} className="flex items-center space-x-4 hover:bg-gray-700 justify-between w-full rounded-lg transition-all p-2  duration-300">
+                    <div className=" flex w-full space-x-4  bg-none  ">
+                        <span className="w-8 h-8 rounded-xl bg-gradient-to-r from-purple-600 via-violet-800 to-blue-500 "></span>
                         <p className="text-lg w-full font-medium text-white">
                             {folder?.folderName}
                         </p>
-                    </Link>
-                    
-                </div>
+                    </div>
+                    <DropdownMenu >
+                    <DropdownMenuTrigger className="p-1 rounded-full">
+                        <IconDotsVertical color="white" size={20}/>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-white text-black transition-all duration-300">
+                        <DropdownMenuLabel>Options</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all" >Profile</DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all">Billing</DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all">Team</DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all">Subscription</DropdownMenuItem>
+                    </DropdownMenuContent>
+                    </DropdownMenu>
+
+                </Link>
             ))
             :
             <li className="flex items-center space-x-4 justify-between w-full ">

@@ -36,7 +36,9 @@ export default function LoginForm() {
       const output = await res.json();
       console.log(output)
       if(!res.ok){
-        console.log('error')
+        setError('root',{
+        message:'Bad Request'
+      })
       }else{
         localStorage.setItem("token",output.user);
         router.push('/home')
@@ -52,7 +54,7 @@ export default function LoginForm() {
       <div className='w-80'>
         <BackgroundGradient className="rounded-[22px]   bg-zinc-900">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full h-max pb-6 shadow-lg rounded-lg flex flex-col ">
-          <h2 className=" font-GraphikBlack font-medium text-3xl mt-6 mb-4 mx-auto">Login</h2>
+          <h2 className=" font-GraphikBlack font-medium text-3xl mt-6 text-white mb-4 mx-auto">Login</h2>
           <div className="relative z-0 w-[80%] mx-auto group font-GraphikBlack mb-4 ">
             <input {...register('email')} type="text" name="email" className="input-class peer" placeholder=" "  />
             <Label htmlFor='email' text='Email'/>

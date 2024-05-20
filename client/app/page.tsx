@@ -6,7 +6,7 @@ import { FlipWords } from "@/components/ui/flip-words";
 export default function Home() {
   const words = ["better", "cute", "beautiful", "modern"];
   return (
-    <div className="w-[calc(100%-4rem)] mx-auto rounded-md  h-screen overflow-hidden">
+    <div className=" mx-auto w-screen  h-screen overflow-hidden">
       <Vortex
         backgroundColor="black"
         rangeY={800}

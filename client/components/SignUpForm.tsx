@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {z} from 'zod'
@@ -50,11 +50,15 @@ export default function SignUpForm() {
     }
   }
 
+  useEffect(()=>{
+    console.log(backend)
+  },[])
+
   return (
     <div className='w-80 lg:w-96'>
     <BackgroundGradient className="rounded-[22px]   bg-zinc-900">
       <form onSubmit={handleSubmit(onSubmit)} className="w-full h-max pb-6 shadow-lg rounded-lg flex flex-col ">
-          <h2 className=" font-GraphikBlack font-medium text-3xl mt-6 mb-4 mx-auto">Sign Up</h2>
+          <h2 className=" font-GraphikBlack font-medium text-3xl text-white mt-6 mb-4 mx-auto">Sign Up</h2>
           <div className="grid w-[80%] mx-auto md:grid-cols-2 md:gap-6">
               <div className="relative z-0 w-full mb-3 md:mb-6 group">
                   <input {...register('firstName')} type="text" name="firstName" id="firstName" className="input-class peer" placeholder=" " required />
