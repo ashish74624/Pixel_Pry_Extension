@@ -1,9 +1,15 @@
+'use client'
 import React from 'react'
 import { Navbar } from '@/components/Navbar';
 import {IconBookUpload} from '@tabler/icons-react'
-import Image from 'next/image';
 import { DirectionAwareHover } from '@/components/ui/direction-aware-hover';
 import DeleteButton from '@/components/DeleteButton';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import DropZone from '@/components/DropZone';
 
 interface ImageInfo {
     _id: string;
@@ -22,13 +28,13 @@ const backend = process.env.BACKEND;
 const cloudName = process.env.CLOUD_NAME;
 
 const getFolderData = async (email:string,folderName:string)=>{
-      const res = await fetch(`${backend}/getFolderData/${email}/${folderName}`);
+      const res = await fetch(`${backend}/getFolderData/${email}/${folderName}`,{cache:'no-store'});
       return res.json();
       // return data;
     }
 
 export default async function folderPage({params}:{
-    params:{
+    params: {
         email:string;
         folderName:string;
     }
@@ -37,14 +43,19 @@ export default async function folderPage({params}:{
   const images:ImageInfo[] = await getFolderData(params.email,params.folderName);
 
   return (
+
     <main className='text-white'>
       <Navbar/>
       <section className='w-[80vw] mx-auto mt-6'>
         <div className='flex w-full justify-between'>
           <h1 className='text-4xl'>{params.folderName}</h1>
-          <button className='bg-purple-700 px-6 text-sm gap-3 rounded-full flex items-center'>
-            New <IconBookUpload size={20} stroke={1}/> 
-          </button>
+          <Drawer>
+            <DrawerTrigger className='bg-purple-700 px-6 text-sm gap-3 rounded-full flex items-center'>New <IconBookUpload size={20} stroke={1}/> </DrawerTrigger>
+            <DrawerContent className='dark'>
+              <DropZone folderName={params.folderName as string} email={params.email as string} />
+            </DrawerContent>
+          </Drawer>
+
         </div>
         {/*  */}
         <div className={`w-max grid ${images.length >0 ? 'lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ':'grid-cols-1'} gap-8 mx-auto mt-6`}>
