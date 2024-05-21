@@ -26,7 +26,7 @@ interface Props {
 
 export default function DeleteButton({id}:Props) {
   return (
-    <button className=' text-red-500 hover:underline' onClick={()=>{deleteImage(id)}}>
+    <button type='submit' className='bg-red-500 text-sm text-white px-3 py-2 rounded' onClick={()=>{deleteImage(id)}}>
         Delete
     </button>
   )

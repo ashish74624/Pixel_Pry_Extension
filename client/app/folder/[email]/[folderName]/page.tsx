@@ -12,6 +12,18 @@ import {
 } from "@/components/ui/drawer"
 import DropZone from '@/components/DropZone';
 import ImageSkel from '@/components/ImageSkel';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+  DialogFooter
+} from "@/components/ui/dialog"
+import { Toaster } from 'react-hot-toast';
+
 
 interface ImageInfo {
     _id: string;
@@ -42,7 +54,7 @@ const cloudName = process.env.CLOUD_NAME;
         setLoading(false);
       }
     getFolderData();
-  },[loading])
+  },[loading,params.email,params.folderName])
 
     
   
@@ -51,7 +63,7 @@ const cloudName = process.env.CLOUD_NAME;
 
   return (
 
-    <main className='text-white'>
+    <main className='text-white pb-10'>
       <Navbar/>
       <section className='w-[80vw] mx-auto mt-6'>
         <div className='flex w-full justify-between'>
@@ -70,19 +82,35 @@ const cloudName = process.env.CLOUD_NAME;
           ?
           <ImageSkel/>
           :
-          <div className={`w-max grid ${images.length >0 ? 'lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ':'grid-cols-1'} gap-8 mx-auto mt-6`}>
+          <div className={`w-max grid ${images.length >0 ? 'lg:grid-cols-3 md:grid-cols-2 grid-cols-1 ':'grid-cols-1'} gap-8 mx-auto mt-6 place-content-center`}>
           {
             images.length >0
             ?
-            
-              
               images.map((data:ImageInfo)=>(
-                <DirectionAwareHover key={data._id} imageUrl={`https://res.cloudinary.com/${cloudName}/image/upload/v${data.imageCloud.versionName}/${data.imageCloud.generatedName}`}>
+                <DirectionAwareHover key={data._id} className='' imageUrl={`https://res.cloudinary.com/${cloudName}/image/upload/v${data.imageCloud.versionName}/${data.imageCloud.generatedName}`}>
                 <p className="font-bold text-xl">{data.imageName}</p>
-                <DeleteButton id={data._id}/>
+                {/* <DeleteButton id={data._id}/> */}
+                <Dialog>
+                  <DialogTrigger className=' text-red-500 hover:underline'>Delete</DialogTrigger>
+                  <DialogContent className='dark'>
+                    <DialogHeader>
+                      <DialogTitle className='text-white'>Are you absolutely sure?</DialogTitle>
+                      <DialogDescription>
+                        This action cannot be undone. This will permanently delete your image
+                        and remove your data from our servers.
+                      </DialogDescription>
+                      <DialogFooter className='flex w-full'>
+                        <DialogClose className='bg-blue-100 px-3 py-2 rounded text-sm'>
+                          Cancel
+                        </DialogClose>
+                        <DeleteButton id={data._id}/>
+                      </DialogFooter>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+
               </DirectionAwareHover>
             ))
-          
             :
             <div className='w-full h-max flex justify-center items-center mx-auto'>
               No Images available yet
@@ -92,6 +120,7 @@ const cloudName = process.env.CLOUD_NAME;
         }
         
       </section>
+      <Toaster/>
     </main>
   )
 }
