@@ -5,12 +5,15 @@ import { IconCloudUpload } from '@tabler/icons-react'
 import toast, { Toaster } from 'react-hot-toast';
 import convertToBase64 from '@/lib/convertToBase64';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const backend = process.env.BACKEND;
 
 interface DropZoneProps{
-    folderName:string,
-    email:string
+    folderName:string;
+    email:string;
+    loading:boolean;
+    setLoading:React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Image{
@@ -18,7 +21,7 @@ interface Image{
   base64: string ;
 }
 
-const DropZone = ({folderName,email}:DropZoneProps) => {
+const DropZone = ({folderName,email,loading,setLoading}:DropZoneProps) => {
     const router = useRouter();
   const [images, setImages] = useState<Image[]>([]); // Store objects with name and Base64
 
@@ -94,7 +97,7 @@ const DropZone = ({folderName,email}:DropZoneProps) => {
         }
         finally{
             setImages([]);
-            // window.location.reload();
+            setLoading(true);
         }
 
   }
@@ -120,7 +123,9 @@ const DropZone = ({folderName,email}:DropZoneProps) => {
         <div className='grid grid-cols-2 gap-y-12 md:grid-cols-3  lg:grid-cols-5 w-[85vw] xl:w-[70vw] justify-items-center mt-4'>
             {images.map((image, index) => (
                 <article key={index} className="w-40 h-40 lg:w-48 lg:h-48 relative">
-                <img
+                <Image
+                  width={150}
+                  height={150}
                   className="w-40 h-40 lg:w-48 lg:h-48 rounded-t-lg"
                   src={image.base64}
                   alt={`Image ${index}`}
