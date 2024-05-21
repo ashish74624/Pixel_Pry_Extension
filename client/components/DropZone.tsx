@@ -97,7 +97,7 @@ const DropZone = ({folderName,email,loading,setLoading}:DropZoneProps) => {
         }
         finally{
             setImages([]);
-            setLoading(true);
+            window.location.reload();
         }
 
   }
