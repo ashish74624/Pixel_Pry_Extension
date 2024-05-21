@@ -9,7 +9,6 @@ export const addFolder = async(req,res)=>{
         res.status(400).json({msg:'Please add a Folder Name'});
     }
     const folderName= req.body.folderName
-    console.log(folderName);
     try{
         const user = await User.findOne({ email: req.params.email})
         const doc = await Doc.findOne({ email: req.params.email});//Checking if doc exist or not
@@ -60,8 +59,11 @@ export const deleteFolder=async(req,res)=>{
 
 export const renameFolder = async(req,res)=>{
     const { email } = req.params;
-    const { newFolderName ,oldFolderName} = req.body;
-
+    const  newFolderName  = req.body.newFolderName;
+    const oldFolderName = req.body.oldFolderName;
+    console.log(newFolderName)
+    console.log(oldFolderName)
+    console.log(email)
   try {
     const doc = await Doc.findOneAndUpdate(
       { email },
@@ -76,13 +78,13 @@ export const renameFolder = async(req,res)=>{
     );
 
     if (!doc) {
-      return res.status(404).send('Document or folder not found');
+      return res.status(404).json({msg:'Document or folder not found'});
     }
 
-    res.json({ message: 'Folder name updated successfully' });
+    res.json({ msg: 'Folder name updated successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal server error');
+    res.status(500).json({msg:'Internal server error'});
   }
 }
 

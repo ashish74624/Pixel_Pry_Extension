@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react"
 import Link from 'next/link'
 import toast, { Toaster } from 'react-hot-toast';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { IconDotsVertical } from '@tabler/icons-react'
 import { IconFolder } from '@tabler/icons-react'
 import {
   Dialog,
@@ -84,16 +75,16 @@ export default  function Folder({userData}:FolderProps) {
       }
     }
 
-    const renameFolder=async(event:React.FormEvent<HTMLFormElement>)=>{
+    const renameFolder=async(event:React.FormEvent<HTMLFormElement>,folderN:string)=>{
         event.preventDefault();
     //   toast.loading("Creating Folder...");
       try{
-        const res = await fetch(`${backend}/api/doc/renameFolder/${userData?.email}/`,{
+        const res = await fetch(`${backend}/api/doc/renameFolder/${userData?.email}`,{
             method:'PATCH',
             headers:{'Content-Type':'application/json'},
             body : JSON.stringify({
-              oldFolderName:folderName,
-              newFolderName
+              oldFolderName:folderN,
+              newFolderName:newFolderName
             })
           });
           const data = await res.json();
@@ -101,8 +92,10 @@ export default  function Folder({userData}:FolderProps) {
             // toast.dismiss();
             setTimeout(()=>{
                 toast.success(data.msg);
-                window.location.reload()
             },100)
+            setTimeout(()=>{
+                window.location.reload()
+            },1000)
           }
           else{
             // toast.dismiss();
@@ -113,7 +106,7 @@ export default  function Folder({userData}:FolderProps) {
       }catch{
         // toast.dismiss();
             setTimeout(()=>{
-                toast.error("Folder Not Created - Server Down");
+                toast.error("Folder Not Renamed - Server Down");
             },100)
       }
     }
@@ -192,35 +185,48 @@ export default  function Folder({userData}:FolderProps) {
         </Dialog>
    </div>
    <div className="">
-        <div role="list" className="grid grid-cols-3 gap-4">
+        <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
             {
             folders
             ?
             folders.map((folder:FolderList )=>(
-                <Link  href={`/folder/${userData?.email}/${folder?.folderName}`} key={folder._id} className="flex items-center space-x-4 hover:bg-gray-700 justify-between w-full rounded-lg transition-all p-2  duration-300">
-                    <div className=" flex w-full space-x-4  bg-none  ">
-                        <span className="w-8 h-8 rounded-xl bg-gradient-to-r from-purple-600 via-violet-800 to-blue-500 "></span>
-                        <p className="text-lg w-full font-medium text-white">
-                            {folder?.folderName}
-                        </p>
-                    </div>
-                    <DropdownMenu >
-                    <DropdownMenuTrigger className="p-1 rounded-full">
-                        <IconDotsVertical color="white" size={20}/>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-white text-black transition-all duration-300">
-                        <DropdownMenuLabel>Options</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all" >
-                            <Dialog>
-                                <DialogTrigger>
-                                    Rename Folder
-                                </DialogTrigger>
-                                <DialogContent className="dark">
-                                    <DialogHeader className=" space-y-4">
-                                    {/* <DialogTitle>Add New Folder</DialogTitle> */}
-                                    <DialogDescription className="">
-                                    <form onSubmit={(e)=>{createFolder(e)}} className='w-full h-max space-y-4'>
+                <li key={folder._id} className="flex items-center space-x-4 justify-between w-full ">
+                    <Link className="hover:bg-gray-700 flex w-full space-x-4 bg-none py-2 sm:py-4 px-2 rounded-lg" href={`/folder/${userData?.email}/${folder?.folderName}`}>
+                            <span className="w-8 h-8 rounded-full px-4 bg-gradient-to-r from-purple-600 via-violet-800 to-blue-500 "></span>
+                            <p className="text-lg w-full font-medium text-white">
+                                {folder?.folderName}
+                            </p>
+                    </Link>
+                    <Dialog>
+                        <DialogTrigger className="bg-purple-700 hover:bg-purple-800 text-white transition-all rounded-full text-xs px-2 py-1 ">
+                            Delete
+                        </DialogTrigger>
+                        <DialogContent className="dark">
+                            <DialogHeader>
+                            <DialogTitle className="text-white">Are you sure absolutely sure?</DialogTitle>
+                            <DialogDescription>
+                                This action cannot be undone. This will permanently delete your Folder
+                                and remove your data from our servers.
+                                <div className=" w-full flex gap-4 h-max">
+                                    <button 
+                                    onClick={()=>{deleteFolder((userData?.email) as string,folder._id,folder.folderName )}} 
+                                    className="px-4 py-2 bg-red-500 active:bg-red-700 rounded-lg text-sm text-white mt-2">
+                                        Delete
+                                    </button>
+                                    <DialogClose className="px-4 py-2 bg-blue-100 active:bg-blue-200 rounded-lg text-sm mt-2">
+                                        Cancel
+                                    </DialogClose>
+                                </div>
+                            </DialogDescription>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                    <Dialog>
+                        <DialogTrigger className="bg-purple-700 hover:bg-purple-800 text-white transition-all rounded-full text-xs px-2 py-1 ">
+                            Rename
+                        </DialogTrigger>
+                        <DialogContent className="dark">
+                             <form onSubmit={(e)=>{renameFolder(e,folder?.folderName)}} className='w-full h-max space-y-4'>
                                         <div className="">
                                             <label htmlFor="folder" className="block mb-2 text-lg font-medium dark:text-white text-gray-900 ">
                                                 Rename Folder
@@ -229,26 +235,16 @@ export default  function Folder({userData}:FolderProps) {
                                         </div>
                                         <button type="submit" className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "> Rename</button>
                                     </form>
-                                    </DialogDescription>
-                                    </DialogHeader>
-                                </DialogContent>
-                            </Dialog>
-                            
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all">Billing</DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all">Team</DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all">Subscription</DropdownMenuItem>
-                    </DropdownMenuContent>
-                    </DropdownMenu>
-
-                </Link>
+                        </DialogContent>
+                    </Dialog>
+                </li>
             ))
             :
             <li className="flex items-center space-x-4 justify-between w-full ">
                 You have not created any folders yet
             </li>
         }
-        </div>
+        </ul>
    </div>
    <Toaster/>
 </div>

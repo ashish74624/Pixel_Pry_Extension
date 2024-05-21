@@ -12,7 +12,7 @@ const app = express();
 
 app.use(cors({
   origin: ['https://image-get.vercel.app','https://imagedrop.vercel.app','https://image-drop-ashish74624.vercel.app','http://localhost:3000','http://localhost:3001'],
-  methods: ['GET', 'PUT', 'POST', 'DELETE'],
+  methods: ['GET', 'PUT', 'POST', 'DELETE','PATCH'],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }))// For body parsing
