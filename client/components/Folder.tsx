@@ -10,6 +10,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { IconDotsVertical } from '@tabler/icons-react'
+import { IconFolder } from '@tabler/icons-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+  DialogFooter
+} from "@/components/ui/dialog"
 
 interface tokenType {
   _id:string;
@@ -118,9 +129,33 @@ export default  function Folder({userData}:FolderProps) {
     // console.log(folders);
   return (
   <div className=" w-[90vw] md:w-[80vw] xl:w-[50vw] py-4 px-2 border rounded-lg shadow sm:p-8 bg-zinc-900 border-gray-700 h-max mt-10 mx-auto ">
-    <div className="flex items-center justify-between mb-4 mx-auto w-max ">
+    <div className="flex items-center justify-between mb-4 mx-auto w-full ">
         <h5 className="text-2xl font-bold leading-none text-white">Your Folders</h5>
-        
+        {/* <button className="bg-purple-700 px-6 text-sm gap-3 py-2 text-white rounded-full flex items-center">
+            
+        </button> */}
+        <Dialog>
+            <DialogTrigger className="bg-purple-700 px-6 text-sm gap-3 py-2 text-white rounded-full flex items-center">
+                <IconFolder size={20} />
+            <p>
+                Add Folder
+            </p>
+            </DialogTrigger>
+            <DialogContent className="dark">
+                <DialogHeader className=" space-y-4">
+                {/* <DialogTitle>Add New Folder</DialogTitle> */}
+                <DialogDescription className="">
+                <form onSubmit={(e)=>{createFolder(e)}} className='w-full h-max space-y-4'>
+                    <div className="">
+                        <label htmlFor="folder" className="block mb-2 text-lg font-medium dark:text-white text-gray-900 ">Folder Name</label>
+                        <input type="text" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5 " onChange={(e) => {setFolderName(e.target.value)}} required/>
+                    </div>
+                    <button type="submit" className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ">Create Folder</button>
+                </form>
+                </DialogDescription>
+                </DialogHeader>
+            </DialogContent>
+        </Dialog>
    </div>
    <div className="">
         <div role="list" className="grid grid-cols-3 gap-4">
