@@ -58,4 +58,36 @@ export const deleteFolder=async(req,res)=>{
     }
 }
 
-export default {addFolder,deleteFolder};
+export const renameFolder = async(req,res)=>{
+    const { email } = req.params;
+    const { newFolderName ,oldFolderName} = req.body;
+
+  try {
+    const doc = await Doc.findOneAndUpdate(
+      { email },
+      {
+        $set: {
+          "folders.$[folder].folderName": newFolderName
+        }
+      },
+      {
+        arrayFilters: [ { "folder.folderName": oldFolderName } ]
+      }
+    );
+
+    if (!doc) {
+      return res.status(404).send('Document or folder not found');
+    }
+
+    res.json({ message: 'Folder name updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error');
+  }
+}
+
+// app.put('/folders/:email/:oldFolderName', async (req, res) => {
+  
+// });
+
+export default {addFolder,deleteFolder,renameFolder};

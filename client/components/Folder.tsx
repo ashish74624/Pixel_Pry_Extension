@@ -50,7 +50,7 @@ const backend = process.env.BACKEND;
 export default  function Folder({userData}:FolderProps) {
     const [folders,setFolders] = useState<FolderList[]>([]);
     const [folderName, setFolderName] = useState('');
-    // console.log(userData)
+    const [newFolderName,setNewFolderName] = useState(folderName);
     const createFolder=async(event:React.FormEvent<HTMLFormElement>)=>{
         event.preventDefault();
     //   toast.loading("Creating Folder...");
@@ -60,6 +60,40 @@ export default  function Folder({userData}:FolderProps) {
             headers:{'Content-Type':'application/json'},
             body : JSON.stringify({
               folderName:folderName
+            })
+          });
+          const data = await res.json();
+          if(res.ok){
+            // toast.dismiss();
+            setTimeout(()=>{
+                toast.success(data.msg);
+                window.location.reload()
+            },100)
+          }
+          else{
+            // toast.dismiss();
+            setTimeout(()=>{
+                toast.error(data.msg);
+            },100)
+          }
+      }catch{
+        // toast.dismiss();
+            setTimeout(()=>{
+                toast.error("Folder Not Created - Server Down");
+            },100)
+      }
+    }
+
+    const renameFolder=async(event:React.FormEvent<HTMLFormElement>)=>{
+        event.preventDefault();
+    //   toast.loading("Creating Folder...");
+      try{
+        const res = await fetch(`${backend}/api/doc/renameFolder/${userData?.email}/`,{
+            method:'PATCH',
+            headers:{'Content-Type':'application/json'},
+            body : JSON.stringify({
+              oldFolderName:folderName,
+              newFolderName
             })
           });
           const data = await res.json();
@@ -177,7 +211,30 @@ export default  function Folder({userData}:FolderProps) {
                     <DropdownMenuContent className="bg-white text-black transition-all duration-300">
                         <DropdownMenuLabel>Options</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all" >Profile</DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all" >
+                            <Dialog>
+                                <DialogTrigger>
+                                    Rename Folder
+                                </DialogTrigger>
+                                <DialogContent className="dark">
+                                    <DialogHeader className=" space-y-4">
+                                    {/* <DialogTitle>Add New Folder</DialogTitle> */}
+                                    <DialogDescription className="">
+                                    <form onSubmit={(e)=>{createFolder(e)}} className='w-full h-max space-y-4'>
+                                        <div className="">
+                                            <label htmlFor="folder" className="block mb-2 text-lg font-medium dark:text-white text-gray-900 ">
+                                                Rename Folder
+                                            </label>
+                                            <input type="text" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5 " onChange={(e) => {setNewFolderName(e.target.value)}} required/>
+                                        </div>
+                                        <button type="submit" className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "> Rename</button>
+                                    </form>
+                                    </DialogDescription>
+                                    </DialogHeader>
+                                </DialogContent>
+                            </Dialog>
+                            
+                        </DropdownMenuItem>
                         <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all">Billing</DropdownMenuItem>
                         <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all">Team</DropdownMenuItem>
                         <DropdownMenuItem className="hover:bg-neutral-800 hover:text-white transition-all">Subscription</DropdownMenuItem>
