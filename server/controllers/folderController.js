@@ -87,7 +87,6 @@ export const uploadImage = async(req,res)=>{
 
 export const deleteImage = async(req,res)=>{
     let id=req.params.id;
-    console.log(id);
     try {
         const image = await Folder.findOneAndDelete({_id:id},{new:true});
         if (!image) {

@@ -4,7 +4,6 @@ import { Navbar } from '@/components/Navbar';
 import {IconBookUpload} from '@tabler/icons-react'
 import { DirectionAwareHover } from '@/components/ui/direction-aware-hover';
 import DeleteButton from '@/components/DeleteButton';
-import { Suspense } from 'react';
 import {
   Drawer,
   DrawerContent,
@@ -23,7 +22,7 @@ import {
   DialogFooter
 } from "@/components/ui/dialog"
 import { Toaster } from 'react-hot-toast';
-
+import decodeURIComponent  from 'decode-uri-component'; 
 
 interface ImageInfo {
     _id: string;
@@ -45,7 +44,7 @@ const cloudName = process.env.CLOUD_NAME;
  const FolderPage=({params}:{params: {email:string;folderName:string;}}) =>{
   const [images,setImages] = useState<ImageInfo[]>([]);
   const [loading,setLoading] = useState(true);
-  
+  const decodedFolderName = decodeURIComponent(params.folderName);
   useEffect(()=>{
     const getFolderData = async ()=>{
         const res = await fetch(`${backend}/getFolderData/${params.email}/${params.folderName}`,{cache:'no-store'});
@@ -67,11 +66,11 @@ const cloudName = process.env.CLOUD_NAME;
       <Navbar/>
       <section className='w-[80vw] mx-auto mt-6'>
         <div className='flex w-full justify-between'>
-          <h1 className='text-4xl'>{params.folderName}</h1>
+          <h1 className='text-4xl'>{decodedFolderName}</h1>
           <Drawer>
             <DrawerTrigger className='bg-purple-700 px-6 text-sm gap-3 rounded-full flex items-center'>New <IconBookUpload size={20} stroke={1}/> </DrawerTrigger>
             <DrawerContent className='dark'>
-              <DropZone folderName={params.folderName as string} email={params.email as string} loading={loading} setLoading={setLoading} />
+              <DropZone folderName={decodedFolderName as string} email={params.email as string}  />
             </DrawerContent>
           </Drawer>
 
@@ -120,7 +119,7 @@ const cloudName = process.env.CLOUD_NAME;
         }
         
       </section>
-      <Toaster/>
+      {/* <Toaster/> */}
     </main>
   )
 }

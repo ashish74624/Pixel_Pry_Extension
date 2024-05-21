@@ -12,8 +12,6 @@ const backend = process.env.BACKEND;
 interface DropZoneProps{
     folderName:string;
     email:string;
-    loading:boolean;
-    setLoading:React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface Image{
@@ -21,7 +19,7 @@ interface Image{
   base64: string ;
 }
 
-const DropZone = ({folderName,email,loading,setLoading}:DropZoneProps) => {
+const DropZone = ({folderName,email}:DropZoneProps) => {
     const router = useRouter();
   const [images, setImages] = useState<Image[]>([]); // Store objects with name and Base64
 

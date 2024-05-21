@@ -9,6 +9,7 @@ export const addFolder = async(req,res)=>{
         res.status(400).json({msg:'Please add a Folder Name'});
     }
     const folderName= req.body.folderName
+    console.log(folderName);
     try{
         const user = await User.findOne({ email: req.params.email})
         const doc = await Doc.findOne({ email: req.params.email});//Checking if doc exist or not
