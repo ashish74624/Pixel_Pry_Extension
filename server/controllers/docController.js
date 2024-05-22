@@ -3,40 +3,37 @@ import Folder from '../models/Folder.js'
 import User from '../models/user.js'
 // Start with functions now
 
-export const addFolder = async(req,res)=>{
-    if(!req.body.folderName){
+export const addFolder = async(req, res) => {
+    if (!req.body.folderName) {
         console.log("No folder");
-        res.status(400).json({msg:'Please add a Folder Name'});
+        return res.status(400).json({ msg: 'Please add a Folder Name' });
     }
-    const folderName= req.body.folderName
-    try{
-        const user = await User.findOne({ email: req.params.email})
-        const doc = await Doc.findOne({ email: req.params.email});//Checking if doc exist or not
-        if(!doc){
+    const folderName = req.body.folderName;
+    try {
+        const user = await User.findOne({ email: req.params.email });
+        const doc = await Doc.findOne({ email: req.params.email });
 
-            const doc = new Doc({
-                email:req.params.email,
-                folders : [{folderName:folderName}]//If doc does not already exist we create a new doc and add folderName to if
+        if (!doc) {
+            const newDoc = new Doc({
+                email: req.params.email,
+                folders: [{ folderName: folderName }]
             });
+            await newDoc.save();
+            return res.status(201).json({ msg: 'Folder Created' });
+        } else {
+            const folderExists = doc.folders.some(folder => folder.folderName === folderName);
+            if (folderExists) {
+                return res.status(400).json({ msg: 'Folder Name already exists' });
+            }
+            doc.folders.push({ folderName: folderName });
             await doc.save();
-            res.status(201).json({msg:'Folder Created'});
-        }else{
-            //Creating Folder in the existing document
-            const doc1 = await Doc.findOneAndUpdate({email:req.params.email},{
-                $push:{
-                    folders: {folderName:folderName} // use this method it's better
-                }
-            })
-            // doc.folders.push({folderName:folderName})//Ye push/pop wala push h na ki push/pull wala
-            await doc1.save()
-            res.status(201).json({msg:'Folder Created'});
-            
-
-        } 
-    }catch(e){
-        res.status(500).json({msg:"Unable to create folder at the moment"})
+            return res.status(201).json({ msg: 'Folder Created' });
+        }
+    } catch (e) {
+        return res.status(500).json({ msg: 'Unable to create folder at the moment' });
     }
-}
+};
+
 
 export const deleteFolder=async(req,res)=>{
     try{
@@ -57,36 +54,36 @@ export const deleteFolder=async(req,res)=>{
     }
 }
 
-export const renameFolder = async(req,res)=>{
+export const renameFolder = async(req, res) => {
     const { email } = req.params;
-    const  newFolderName  = req.body.newFolderName;
-    const oldFolderName = req.body.oldFolderName;
-    console.log(newFolderName)
-    console.log(oldFolderName)
-    console.log(email)
-  try {
-    const doc = await Doc.findOneAndUpdate(
-      { email },
-      {
-        $set: {
-          "folders.$[folder].folderName": newFolderName
+    const { newFolderName, oldFolderName } = req.body;
+    try {
+        const doc = await Doc.findOne({ email });
+
+        if (!doc) {
+            return res.status(404).json({ msg: 'Document not found' });
         }
-      },
-      {
-        arrayFilters: [ { "folder.folderName": oldFolderName } ]
-      }
-    );
 
-    if (!doc) {
-      return res.status(404).json({msg:'Document or folder not found'});
+        const folderExists = doc.folders.some(folder => folder.folderName === newFolderName);
+        if (folderExists) {
+            return res.status(400).json({ msg: 'Folder Name already exists' });
+        }
+
+        const folderToUpdate = doc.folders.find(folder => folder.folderName === oldFolderName);
+        if (!folderToUpdate) {
+            return res.status(404).json({ msg: 'Old Folder Name not found' });
+        }
+
+        folderToUpdate.folderName = newFolderName;
+        await doc.save();
+
+        return res.json({ msg: 'Folder name updated successfully' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: 'Internal server error' });
     }
+};
 
-    res.json({ msg: 'Folder name updated successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({msg:'Internal server error'});
-  }
-}
 
 // app.put('/folders/:email/:oldFolderName', async (req, res) => {
   
