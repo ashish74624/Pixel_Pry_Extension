@@ -4,6 +4,7 @@ import { Navbar } from '@/components/Navbar';
 import {IconBookUpload} from '@tabler/icons-react'
 import { DirectionAwareHover } from '@/components/ui/direction-aware-hover';
 import DeleteButton from '@/components/DeleteButton';
+import toast from 'react-hot-toast';
 import {
   Drawer,
   DrawerContent,
@@ -44,7 +45,47 @@ const cloudName = process.env.CLOUD_NAME;
  const FolderPage=({params}:{params: {email:string;folderName:string;}}) =>{
   const [images,setImages] = useState<ImageInfo[]>([]);
   const [loading,setLoading] = useState(true);
+  const [newImageName,setNewImageName] = useState('')
   const decodedFolderName = decodeURIComponent(params.folderName);
+
+  const renameImage=async(event:React.FormEvent<HTMLFormElement>,id:string)=>{
+        event.preventDefault();
+    //   toast.loading("Creating Folder...");
+      try{
+        const res = await fetch(`${backend}/renameImage`,{
+            method:'PATCH',
+            headers:{'Content-Type':'application/json'},
+            body : JSON.stringify({
+              email: decodeURIComponent(params.email),
+              id:id,
+              folderName:params?.folderName,
+              newImageName:newImageName
+            })
+          });
+          const data = await res.json();
+          if(res.ok){
+            // toast.dismiss();
+            setTimeout(()=>{
+                toast.success(data.msg);
+            },100)
+            setTimeout(()=>{
+                window.location.reload()
+            },1000)
+          }
+          else{
+            // toast.dismiss();
+            setTimeout(()=>{
+                toast.error(data.msg);
+            },100)
+          }
+      }catch{
+        // toast.dismiss();
+            setTimeout(()=>{
+                toast.error("Image Not Renamed - Server Down");
+            },100)
+      }
+    }
+
   useEffect(()=>{
     const getFolderData = async ()=>{
         const res = await fetch(`${backend}/getFolderData/${params.email}/${params.folderName}`,{cache:'no-store'});
@@ -89,6 +130,22 @@ const cloudName = process.env.CLOUD_NAME;
                 <DirectionAwareHover key={data._id} className='' imageUrl={`https://res.cloudinary.com/${cloudName}/image/upload/v${data.imageCloud.versionName}/${data.imageCloud.generatedName}`}>
                 <p className="font-bold text-xl">{data.imageName}</p>
                 {/* <DeleteButton id={data._id}/> */}
+                
+                <Dialog>
+                  <DialogTrigger className=' text-white hover:underline mr-4'>Rename</DialogTrigger>
+                  <DialogContent className='dark'>
+                    <form onSubmit={(e)=>{renameImage(e,data?._id)}} className='w-full h-max space-y-4'>
+                      <div className="">
+                        <label htmlFor="image" className="block mb-2 text-lg font-medium dark:text-white text-gray-900 ">
+                          Rename Image
+                        </label>
+                        <input type="text" id="image" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5 " onChange={(e) => {setNewImageName(e.target.value)}} required/>
+                      </div>
+                      <button type="submit" className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "> Rename</button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+                {/*  */}
                 <Dialog>
                   <DialogTrigger className=' text-red-500 hover:underline'>Delete</DialogTrigger>
                   <DialogContent className='dark'>
@@ -119,7 +176,7 @@ const cloudName = process.env.CLOUD_NAME;
         }
         
       </section>
-      {/* <Toaster/> */}
+      <Toaster/>
     </main>
   )
 }

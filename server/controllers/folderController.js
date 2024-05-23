@@ -102,4 +102,46 @@ export const deleteImage = async(req,res)=>{
     }
 }
 
-export default { getFolders,getFolderData,uploadImage,deleteImage,getImage }
+export const renameImage = async(req,res)=>{
+    // const { email, folderName, currentImageName, newImageName } = req.body;
+    const id = req.body.id;
+    const folderName= req.body.folderName;
+    const newImageName = req.body.newImageName;
+    const email = req.body.email;
+
+    if (!id || !folderName  || !newImageName) {
+        return res.status(400).json({ msg: 'All fields are required' });
+    }
+
+    try {
+        // Find the folder that matches the email and folderName
+
+        const existingImageSearch = await Folder.findOne({email:email,folderName:folderName,imageName:newImageName});
+        
+        if(existingImageSearch){
+            return res.status(400).json({ msg: 'Image name already exists' });
+        }
+
+        const folder = await Folder.findById({_id:id});
+        if (!folder) {
+            return res.status(404).json({ msg: 'Folder not found' });
+        }
+        
+        console.log(folder)
+
+        // Check if the new image name already exists in the folder
+        if (folder.imageName === newImageName) {
+            return res.status(400).json({ msg: 'The new image name already exists' });
+        }
+
+        // Update the image name
+        folder.imageName = newImageName;
+        await folder.save();
+
+        return res.status(200).json({ msg: 'Image name updated successfully' });
+    } catch (error) {
+        return res.status(500).json({ msg: 'Server error', error });
+    }
+}
+
+export default { getFolders,getFolderData,uploadImage,deleteImage,getImage,renameImage }

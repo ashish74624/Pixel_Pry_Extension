@@ -143,7 +143,7 @@ const DropZone = ({folderName,email}:DropZoneProps) => {
                 
                 ))}
         </div>
-    <Toaster/>
+    {/* <Toaster/> */}
     </section>
   );
 };
