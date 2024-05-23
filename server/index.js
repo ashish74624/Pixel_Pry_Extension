@@ -11,7 +11,7 @@ import docRoutes from './routes/docRoutes.js'
 const app = express();
 
 app.use(cors({
-  origin: ['https://image-get.vercel.app','https://imagedrop.vercel.app','https://image-drop-ashish74624.vercel.app','http://localhost:3000','http://localhost:3001'],
+  origin: ['https://tech-nexus.vercel.app','https://technexus-ashish74624s-projects.vercel.app','https://technexusapi.vercel.app','http://localhost:3000','http://localhost:3001'],
   methods: ['GET', 'PUT', 'POST', 'DELETE','PATCH'],
   credentials: true
 }));
